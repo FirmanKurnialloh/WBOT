@@ -112,7 +112,7 @@ async function Main() {
 
         client.on('ready', async () => {
             spinner.info('WBOT is spinning up!');
-            await utils.delay(5000)
+            await utils.delay(1000)
             // await smartReply({client: client})
             //TODO: if replyUnreadMsg is true then get the unread messages and reply to them.
         });
@@ -194,15 +194,19 @@ async function getResponse(msg, message) {
         hour = date.getHours();
 
         if (hour >= 0 && hour < 12) {
-            return "Good Morning";
+            return "Selamat Pagi";
         }
 
-        if (hour >= 12 && hour < 18) {
-            return "Good evening";
+        if (hour >= 12 && hour < 14) {
+            return "Selamat Siang";
+        }        
+
+        if (hour >= 14 && hour < 18) {
+            return "Selamat Sore";
         }
 
         if (hour >= 18 && hour < 24) {
-            return "Good night";
+            return "Selamat Malam";
         }
     }
 
@@ -370,21 +374,23 @@ async function smartReply({ msg, client }) {
     }
 
     // webhook Call
-    await processWebhook({ msg, client });
+    // await processWebhook({ msg, client });
 
     var exactMatch = list.find((obj) =>
         obj.exact.find((ex) => ex == data.toLowerCase())
     );
-
-    if (exactMatch != undefined) {
-        return sendReply({ msg, client, data: exactMatch });
+    if (exactMatch != undefined) {       
+        sendReply({ msg, client, data: exactMatch });  
     }
+
     var PartialMatch = list.find((obj) =>
         obj.contains.find((ex) => data.toLowerCase().search(ex) > -1)
     );
     if (PartialMatch != undefined) {
-        return sendReply({ msg, client, data: PartialMatch });
+        sendReply({ msg, client, data: PartialMatch }); 
+        await processWebhook({ msg, client }); 
     }
+
     sendReply({ msg, client, data: exactMatch, noMatch: true });
 }
 
